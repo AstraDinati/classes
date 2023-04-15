@@ -1,0 +1,42 @@
+Класс FileManipulator
+Давайте теперь создадим класс для работы с файлами:
+
+<?php
+	class FileManipulator
+	{
+		public function create($filePath)
+		{
+			// создает файл
+		}
+		
+		public function delete($filePath)
+		{
+			// удаляет файл
+		}
+		
+		public function copy($filePath, $copyPath)
+		{
+			// копирует файл
+		}
+		
+		public function rename($filePath, $newName)
+		{
+			// переименовывает файл
+			// вторым параметром принимает новое имя файла (только 
+				имя, не путь) 
+		}
+		
+		public function replace($filePath, $newPath)
+		{
+			// перемещает файл
+		}
+		
+		public function weigh($filePath)
+		{
+			// узнает размер файла
+		}
+	}
+?>
+№1⊗ppOpClFlM
+
+Реализуйте описанный класс FileManipulator. Проверьте его работу.

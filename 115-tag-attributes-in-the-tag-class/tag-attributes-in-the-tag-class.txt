@@ -1,0 +1,93 @@
+Атрибуты тегов в классе Tag
+Пусть теперь мы хотим сделать так, чтобы в создаваемых тегах можно было указывать атрибуты и их значения. 
+Давайте будем передавать атрибуты для тега в виде ассоциативного массива в конструктор тега.
+
+Вот пример (пока не рабочий, это наша цель):
+
+<?php
+	$tag = new Tag('input', ['id' => 'test', 'class' => 'eee bbb']);
+	echo $tag->open(); // выведет <input id="test" class="eee 
+		bbb"> 
+?>
+Давайте сделаем в нашем классе вспомогательный приватный метод getAttrsStr, который параметром будет 
+получать массив, а возвращать строку с атрибутами. Пример работы нашего метода:
+
+<?php
+	$attrs = ['id' => 'test', 'class' => 'eee bbb'];
+	echo $this->getAttrsStr($attrs); // выведет ' id="test" class="eee 
+		bbb"' 
+?>
+Давайте напишем его реализацию:
+
+<?php
+	private function getAttrsStr($attrs)
+	{
+		if (!empty($attrs)) {
+			$result = '';
+			
+			foreach ($attrs as $name => $value) {
+				$result .= " $name=\"$value\"";
+			}
+			
+			return $result;
+		} else {
+			return '';
+		}
+	}
+?>
+Добавим созданный метод в наш класс:
+
+<?php
+	class Tag
+	{
+		private $name;
+		private $attrs;
+		
+		public function __construct($name, $attrs = [])
+		{
+			$this->name = $name;
+			$this->attrs = $attrs; // записываем атрибуты в свойство
+		}
+		
+		public function open()
+		{
+			$name = $this->name;
+			$attrsStr = $this->getAttrsStr($this->attrs); // формируем строку с 
+				атрибутами 
+			
+			return "<$name$attrsStr>"; // добавляем атрибуты после имени тега
+		}
+		
+		public function close()
+		{
+			$name = $this->name;
+			return "</$name>";
+		}
+		
+		// Формируем строку с атрибутами:
+		private function getAttrsStr($attrs)
+		{
+			if (!empty($attrs)) {
+				$result = '';
+				
+				foreach ($attrs as $name => $value) {
+					$result .= " $name=\"$value\"";
+				}
+				
+				return $result;
+			} else {
+				return '';
+			}
+		}
+	}
+?>
+Проверим работу нашего метода:
+
+<?php
+	$tag = new Tag('input', ['id' => 'test', 'class' => 'eee bbb']);
+	echo $tag->open(); // выведет <input id="test" class="eee 
+		bbb"> 
+?>
+№1⊗ppOpClTgTA
+
+Самостоятельно, не подсматривая в мой код, добавьте в класс Tag возможность добавления атрибутов тега.

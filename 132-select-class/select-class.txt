@@ -1,0 +1,46 @@
+Класс Select
+В данном уроке мы с вами сделаем класс Select, который будет создавать выпадающий 
+список select. Давайте посмотрим, как мы будем пользоваться описанным классом:
+
+<?php
+	echo (new Select->setAttr('name', 'list'))
+		->add( (new Option())->setText('item1') )
+		->add( (new Option())->setText('item2') )
+		->add( (new Option())->setText('item3') )
+		->show();
+?>
+Результат выполнения кода выведет следующее (форматирование мое):
+
+<select name="list">
+	<option>item1</option>
+	<option>item2</option>
+	<option>item3</option>
+</select>
+№1⊗ppOpClFrSl
+
+Реализуйте описанные классы Select и Option.
+
+Атрибут selected
+Сделаем так, чтобы можно было задать отмеченный по умолчанию пункт списка:
+
+<?php
+	echo (new Select)
+		->add( (new Option())->setText('item1') )
+		->add( (new Option())->setText('item2')->setSelected() )
+		->add( (new Option())->setText('item3') )
+		->show();
+?>
+Результат выполнения кода выведет следующее (форматирование мое):
+
+<select>
+	<option>item1</option>
+	<option selected>item2</option>
+	<option>item3</option>
+</select>
+№2⊗ppOpClFrSl
+
+Модифицируйте ваш код в соответствии с описанным.
+
+№3⊗ppOpClFrSl
+
+Сделайте так, чтобы после отправки формы список сохранял свое выбранное значение.

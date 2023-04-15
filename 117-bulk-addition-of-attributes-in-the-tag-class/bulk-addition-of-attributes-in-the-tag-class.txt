@@ -1,0 +1,39 @@
+Массовое добавление атрибутов в классе Tag
+Давайте сделаем метод setAttrs, который будет работать аналогично методу setAttr, но параметром принимать
+ массив атрибутов.
+
+Смотрите пример:
+
+<?php
+	$tag = new Tag('input');
+	
+	echo $tag
+		->setAttrs(['id' => 'test', 'class' => 'eee']) // задаем атрибуты массивом
+		->open(); // выведет <input id="test" class="eee">
+?>
+Предполагается, что пользователь нашего класса будет использовать или метод setAttrs, или метод setAttr, 
+или любую их комбинацию. Вот пример использования двух методов сразу:
+
+<?php
+	$tag = new Tag('input');
+	
+	echo $tag
+		->setAttrs(['id' => 'test', 'class' => 'eee'])
+		->setAttr('type', 'text')
+		->open(); // выведет <input id="test" class="eee" type="text">
+?>
+Так как у нас уже реализован метод setAttr, то реализация нового метода setAttrs становится элементарной:
+
+<?php
+	public function setAttrs($attrs)
+	{
+		foreach ($attrs as $name => $value) {
+			$this->setAttr($name, $value);
+		}
+		
+		return $this;
+	}
+?>
+№1⊗ppOpClTgAVA
+
+Добавьте в ваш класс Tag описанный метод setAttrs. Проверьте его работу.

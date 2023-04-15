@@ -1,0 +1,268 @@
+Класс HtmlList
+Сейчас мы с вами сделаем класс HtmlList для создания списков ul и ol. У этого 
+класса будет метод addItem для добавления пунктов списка и метод show для вывода 
+результата на экран.
+
+Для самих пунктов списка также сделаем отдельный класс, назовем его ListItem. Вот 
+пример того, как мы будем пользоваться нашими классами:
+
+<?php
+	$list = new HtmlList('ul');
+	
+	echo $list
+		->addItem( (new ListItem())->setText('item1') )
+		->addItem( (new ListItem())->setText('item2') )
+		->addItem( (new ListItem())->setText('item3') )
+		->show();
+	
+	/*
+		Результат выполнения кода выведет следующее:
+		<ul>
+			<li>item1</li>
+			<li>item2</li>
+			<li>item3</li>
+		</ul>
+	*/
+?>
+Реализация
+Класс ListItem по сути этот тот же класс Tag. С той разницей, что конструктор 
+класса Tag требует имя тега, а конструктор ListItem не требует параметров, так как
+ всегда создает один и тот же тег li.
+
+Поэтому для реализации класса ListItem достаточно просто просто наследовать от 
+класса Tag, переопределив его конструктор:
+
+<?php
+	class ListItem extends Tag
+	{
+		public function __construct()
+		{
+			parent::__construct('li');
+		}
+	}
+?>
+Давайте теперь напишем реализацию класса HtmlList. Данный класс также удобно 
+унаследовать от Tag, расширив затем родителя нужными нам методами. Итак, наследуем:
+
+<?php
+	class HtmlList extends Tag
+	{
+		
+	}
+?>
+Реализуем метод addItem для добавления пунктов списка:
+
+<?php
+	class HtmlList extends Tag
+	{
+		private $items = []; // массив для хранения лишек
+		
+		public function addItem($li)
+		{
+			$this->items[] = $li;
+			return $this; // вернем $this для цепочки
+		}
+	}
+?>
+Давайте улучшим наш код, указав, что параметр нашего метода принимает только 
+объекты класса ListItem:
+
+<?php
+	class HtmlList extends Tag
+	{
+		private $items = [];
+		
+		public function addItem(ListItem $li)
+		{
+			$this->items[] = $li;
+			return $this;
+		}
+	}
+?>
+Давайте теперь сделаем метод show. На самом деле наш класс HtmlList наследует от 
+своего родителя такой метод - но этот наследуемый метод делает немного не то, что 
+нам нужно.
+
+Наследуемый метод show выводит открывающий тег, закрывающий, а между ними текст. 
+Но в нашем случае в качестве текста будут выступать теги li.
+
+Давайте в таком случае просто переопределим метод show родителя и напишем ему свою
+ реализацию:
+
+<?php
+	class HtmlList extends Tag
+	{
+		private $items = [];
+		
+		public function addItem(ListItem $li)
+		{
+			$this->items[] = $li;
+			return $this;
+		}
+		
+		// Переопределим метод родителя:
+		public function show()
+		{
+			// тут будет наша реализация без вызова parent::show
+		}
+	}
+?>
+Пишем свою реализацию:
+
+<?php
+	public function show()
+	{
+		$result = $this->open(); // открывающий тег
+		
+		// тут надо сформировать лишки и добавить в $result
+		
+		$result .= $this->close(); // закрывающий тег
+		
+		return $result;
+	}
+?>
+Давайте сформируем лишки. Для этого запустим цикл foreach для массива $this->items:
+
+<?php
+	public function show()
+	{
+		$result = $this->open();
+		
+		foreach ($this->items as $item) {
+			$result .= 'тут нужно добавлять теги li';
+		}
+		
+		$result .= $this->close();
+		
+		return $result;
+	}
+?>
+В нашем цикле нужно в переменную $result записывать теги li в формате:
+
+<li>текст</li>
+Здесь нам очень поможет то, что объекты класса ListItem являются наследниками 
+класса Tag, а следовательно, имеют метод show, который и делает то, что нам нужно.
+
+В нашем цикле foreach в переменную $item как раз-таки попадают объекты класса 
+ListItem. Значит, просто будем вызывать у них метод show и наша задача будет 
+решена:
+
+<?php
+	public function show()
+	{
+		$result = $this->open();
+		
+		foreach ($this->items as $item) {
+			$result .= $item->show(); // вызываем метод show
+		}
+		
+		$result .= $this->close();
+		
+		return $result;
+	}
+?>
+Добавим созданный метод show в наш класс HtmlList:
+
+<?php
+	class HtmlList extends Tag
+	{
+		private $items = [];
+		
+		public function addItem(ListItem $li)
+		{
+			$this->items[] = $li;
+			return $this;
+		}
+		
+		public function show()
+		{
+			$result = $this->open();
+			
+			foreach ($this->items as $item) {
+				$result .= $item->show();
+			}
+			
+			$result .= $this->close();
+			
+			return $result;
+		}
+	}
+?>
+Давайте проверим работу нашего класса:
+
+<?php
+	$list = new HtmlList('ul');
+	
+	echo $list
+		->addItem((new ListItem())->setText('item1'))
+		->addItem((new ListItem())->setText('item2'))
+		->addItem((new ListItem())->setText('item3'))
+		->show();
+?>
+Результат выполнения кода выведет следующее (форматирование мое):
+
+<ul>
+	<li>item1</li>
+	<li>item2</li>
+	<li>item3</li>
+</ul>
+А теперь рассмотрим не очевидные на первый взгляд бонусы: так как и класс HtmlList,
+ и класс ListItem наследуют от класса Tag, то автоматически получают все его 
+ методы, например, setAttr.
+
+Это дает нам возможность задавать атрибуты создаваемых тегов. Смотрите пример:
+
+<?php
+	$list = new HtmlList('ul');
+	
+	echo $list->setAttr('class', 'eee')
+		->addItem((new ListItem())->setText('item1')->setAttr('class', 'first'))
+		->addItem((new ListItem())->setText('item2'))
+		->addItem((new ListItem())->setText('item3'))
+		->show();
+	
+	/*
+		Результат выполнения кода выведет следующее:
+		<ul class="eee">
+			<li class="first">item1</li>
+			<li>item2</li>
+			<li>item3</li>
+		</ul>
+	*/
+?>
+№1⊗ppOpClHL
+
+Реализуйте самостоятельно описанные мною классы. Проверьте их работу.
+
+№2⊗ppOpClHL
+
+Сделайте так, чтобы при преобразовании наших классов к строке, метод show не нужно
+ было вызывать. Модифицируйте весь код в соответствии с этим. Не забудьте про вот 
+ это место метода show класса HtmlList:
+
+<?php
+	foreach ($this->items as $item) {
+		$result .= $item->show(); // здесь тоже преобразование к строке
+	}
+?>
+№3⊗ppOpClHL
+
+Сделайте классы Ul и Ol, которые будут наследовать от класса HtmlList. Эти классы 
+должны будут создавать соответствующий тип списков. Пример:
+
+<?php
+	$ul = new Ul; // сделаем список ul
+	$ol = new Ol; // сделаем список ol
+?>
+С помощью созданных классов выведите следующие списки:
+
+<ul>
+	<li>item1</li>
+	<li>item2</li>
+	<li>item3</li>
+</ul>
+<ol>
+	<li>item1</li>
+	<li>item2</li>
+	<li>item3</li>
+</ol>

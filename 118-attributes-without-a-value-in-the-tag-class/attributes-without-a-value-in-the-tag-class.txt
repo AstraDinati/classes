@@ -1,0 +1,105 @@
+Атрибуты без значения в классе Tag
+В HTML существуют атрибуты без значения, например, disabled:
+
+<input id="test" disabled>
+Давайте сделаем так, чтобы метод setAttr мог создавать и такие атрибуты. Пусть, чтобы создать атрибут без
+ значения, вторым параметром метода мы будем передавать значение true:
+
+<?php
+	$tag = new Tag('input');
+	
+	echo $tag
+		->setAttr('id', 'test')
+		->setAttr('disabled', true) // создаем атрибут без значения
+		->open(); // выведет <input id="test" disabled>
+?>
+Пока наш класс Tag не дает возможность сделать такой атрибут. Давайте поправим это, внеся соответствующие
+ правки в метод getAttrsStr:
+
+<?php
+	private function getAttrsStr($attrs)
+	{
+		if (!empty($attrs)) {
+			$result = '';
+			
+			foreach ($attrs as $name => $value) {
+				// Если значение атрибута равно true:
+				if ($value === true) {
+					$result .= " $name"; // это атрибут без значения
+				} else {
+					$result .= " $name=\"$value\""; // это атрибут со значением
+				}
+			}
+			
+			return $result;
+		} else {
+			return '';
+		}
+	}
+?>
+Применим изменение к классу:
+
+<?php
+	class Tag
+	{
+		private $name;
+		private $attrs = [];
+		
+		public function __construct($name)
+		{
+			$this->name = $name;
+		}
+		
+		public function setAttr($name, $value = true)
+		{
+			$this->attrs[$name] = $value;
+			return $this;
+		}
+		
+		public function open()
+		{
+			$name = $this->name;
+			$attrsStr = $this->getAttrsStr($this->attrs);
+			
+			return "<$name$attrsStr>";
+		}
+		
+		public function close()
+		{
+			$name = $this->name;
+			return "</$name>";
+		}
+		
+		private function getAttrsStr($attrs)
+		{
+			if (!empty($attrs)) {
+				$result = '';
+				
+				foreach ($attrs as $name => $value) {
+					if ($value === true) {
+						$result .= " $name";
+					} else {
+						$result .= " $name=\"$value\"";
+					}
+				}
+				
+				return $result;
+			} else {
+				return '';
+			}
+		}
+	}
+?>
+Проверим работу нашего класса:
+
+<?php
+	$tag = new Tag('input');
+	
+	echo $tag
+		->setAttr('id', 'test')
+		->setAttr('disabled', true)
+		->open(); // выведет <input id="test" disabled>
+?>
+№1⊗ppOpClTgAWV
+
+Самостоятельно внесите соответствующие правки в ваш класс Tag.

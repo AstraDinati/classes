@@ -1,0 +1,134 @@
+Класс FormHelper
+Давайте теперь реализуем класс FormHelper, с помощью которого можно будет создавать формы. При 
+этом унаследуем этот класс от класса TagHelper, созданного нами в предыдущем уроке. Вот моя 
+реализация описанного класса:
+
+<?php
+	class FormHelper extends TagHelper
+	{
+		public function openForm($attrs = [])
+		{
+			return $this->open('form', $attrs);
+		}
+		
+		public function closeForm()
+		{
+			return $this->close('form');
+		}
+		
+		public function input($attrs = [])
+		{
+			if (isset($attrs['name'])) {
+				$name = $attrs['name'];
+				
+				if (isset($_REQUEST[$name])) {
+					$attrs['value'] = $_REQUEST[$name];
+				}
+			}
+			
+			return $this->open('input', $attrs);
+		}
+		
+		public function password($attrs = [])
+		{
+			$attrs['type'] = 'password';
+			return $this->input($attrs);
+		}
+		
+		public function hidden($attrs = [])
+		{
+			$attrs['type'] = 'hidden';
+			return $this->open('input', $attrs);
+		}
+		
+		public function submit($attrs = [])
+		{
+			$attrs['type'] = 'submit';
+			return $this->open('input', $attrs);
+		}
+		
+		public function checkbox($attrs = [])
+		{
+			$attrs['type'] = 'checkbox';
+			$attrs['value'] = 1;
+			
+			if (isset($attrs['name'])) {
+				$name = $attrs['name'];
+				
+				if (isset($_REQUEST[$name]) and $_REQUEST[$name] == 1) {
+					$attrs['checked'] = true;
+				}
+				
+				$hidden = $this->hidden(['name' => $name, 'value' => 
+					'0']); 
+			} else {
+				$hidden = '';
+			}
+			
+			return $hidden . $this->open('input', $attrs);
+		}
+	}
+?>
+Давайте применим наш класс для создания формы:
+
+<?php
+	$fh = new FormHelper();
+	
+	echo $fh->openForm(['action' => '', 'method' => 'GET']);
+		echo $fh->input(['name' => 'year']);
+		echo $fh->checkbox(['name' => 'check']);
+		echo $fh->submit();
+	echo $fh->closeForm();
+?>
+В результате получится следующий HTML код:
+
+<form action="" method="GET">
+	<input name="year">
+	<input type="hidden" name="check" value="0">
+	<input type="checkbox" name="check" value="1">
+	<input type="submit">
+</form>
+№1⊗ppOpClFrH
+
+Изучите и разберите мой код описанного класса. Создайте с его помощью какую-нибудь HTML форму, 
+применив как можно больше методов этого класса.
+
+№2⊗ppOpClFrH
+
+Самостоятельно, не подсматривая в мой код, реализуйте описанный класс.
+
+№3⊗ppOpClFrH
+
+Добавьте в вашу реализацию метод для создания тега textarea. Пусть этот тег сохраняет свое значение
+ после отправки формы.
+
+№4⊗ppOpClFrH
+
+Добавьте в вашу реализацию метод для создания выпадающего списка. Пусть метод первым параметром 
+принимает массив атрибутов тега select, а вторым - массив для создания тегов option. Пусть этот 
+массив содержит ключ 'text' для текста пункта списка и ключ 'attrs' для массива атрибутов пункта 
+списка. Вот пример использования описанного метода:
+
+<?php
+	$fh = new FormHelper();
+	
+	echo $fh->select(
+		['name' => 'list', 'class' => 'eee'],
+		[
+			['text' => 'item1', 'attrs' => ['value' => '1']],
+			['text' => 'item2', 'attrs' => ['value' => '1', 'selected' 
+				=> true]], 
+			['text' => 'item1', 'attrs' => ['value' => '1', 'class' 
+				=> 'last']], 
+		],
+		
+	);
+?>
+В результате должен получится следующий HTML код:
+
+<select name="list" class="eee">
+	<option value="1">item1</option>
+	<option value="2" selected>item2</option>
+	<option value="3" class="last">item3</option>
+</form>
+Сделайте так, чтобы выпадающий список сохранял свое значение после отправки формы.

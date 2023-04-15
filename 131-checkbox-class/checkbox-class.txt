@@ -1,0 +1,118 @@
+Класс Checkbox
+Давайте теперь реализуем класс для создания чекбокса:
+
+<?php
+	class Checkbox extends Tag
+	{
+		public function __construct()
+		{
+			$this->setAttr('type', 'checkbox');
+			$this->setAttr('value', '1');
+			parent::__construct('input');
+		}
+		
+		public function __toString()
+		{
+			return parent::open();
+		}
+	}
+?>
+Сделаем теперь так, чтобы при создании чекбокса в пару к нему с помощью класса Hidden 
+создавался скрытый инпут с таким же именем:
+
+<?php
+	class Checkbox extends Tag
+	{
+		public function __construct()
+		{
+			$this->setAttr('type', 'checkbox');
+			$this->setAttr('value', '1');
+			parent::__construct('input');
+		}
+		
+		public function open()
+		{
+			$name = $this->getAttr('name');
+			
+			if ($name) {
+				$hidden = (new Hidden)
+					->setAttr('name', $name)
+					->setAttr('value', '0');
+				
+				return $hidden->open() . parent::open();
+			} else {
+				return parent::open();
+			}
+		}
+		
+		public function __toString()
+		{
+			return $this->open();
+		}
+	}
+?>
+Реализуем теперь сохранение состояния чекбокса после отправки формы:
+
+<?php
+	class Checkbox extends Tag
+	{
+		public function __construct()
+		{
+			$this->setAttr('type', 'checkbox');
+			$this->setAttr('value', '1');
+			parent::__construct('input');
+		}
+		
+		public function open()
+		{
+			$name = $this->getAttr('name');
+			
+			if ($name) {
+				$hidden = (new Hidden)
+					->setAttr('name', $name)
+					->setAttr('value', '0');
+				
+				if (isset($_REQUEST[$name])) {
+					$value = $_REQUEST[$name];
+					
+					if ($value == 1) {
+						$this->setAttr('checked');
+					} else {
+						$this->removeAttr('checked');
+					}
+				}
+				
+				return $hidden->open() . parent::open();
+			} else {
+				return parent::open();
+			}
+		}
+		
+		public function __toString()
+		{
+			return $this->open();
+		}
+	}
+?>
+Проверим работу созданного класса на какой-нибудь форме:
+
+<?php
+	$form = (new Form)->setAttrs([
+		'action' => '',
+		'method' => 'GET'
+	]);
+	
+	echo $form->open();
+		echo (new Checkbox)->setAttr('name', 'checkbox');
+		echo (new Input)->setAttr('name', 'user');
+		echo new Submit;
+	echo $form->close();
+?>
+№1⊗ppOpClFrCh
+
+Изучите и разберите приведенный мною код. Затем не подсматривая в учебник сделайте 
+такой же класс для создания чекбокса.
+
+№2⊗ppOpClFrCh
+
+Реализуйте класс Radio для создания радио переключателя. Проверьте работу этого класса.

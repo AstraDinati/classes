@@ -1,0 +1,44 @@
+Класс Hidden
+В данном уроке мы с вами сделаем класс Hidden, создающий инпут с типом hidden. Давайте 
+посмотрим, как мы будем пользоваться описанным классом:
+
+Пример 
+<?php
+	echo new Hidden;
+?>
+В результате получится следующий код:
+
+<input type="hidden">
+Пример 
+<?php
+	echo (new Hidden)->setAttr('name', 'id');
+?>
+В результате получится следующий код:
+
+<input type="hidden" name="id">
+Пример 
+А вот так мы будем пользоваться нашим классом в составе формы:
+
+<?php
+	$form = (new Form)->setAttrs([
+		'action' => 'test.php',
+		'method' => 'GET'
+	]);
+	
+	echo $form->open();
+		echo (new Hidden)->setAttr('name', 'id')->setAttr('value', '123');
+		echo (new Input)->setAttr('name', 'year');
+		echo new Submit;
+	echo $form->close();
+?>
+В результате получится следующая форма:
+
+<form action="" method="GET">
+	<input type="hidden" name="id" value="123">
+	<input name="year">
+	<input type="submit">
+</form>
+Практические задачи
+№1⊗ppOpClFrHd
+
+Реализуйте описанный класс, проверьте его работу.

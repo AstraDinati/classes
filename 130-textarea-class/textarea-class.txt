@@ -1,0 +1,57 @@
+Класс Textarea
+В данном уроке мы с вами реализуем класс Textarea, который будет создавать тег textarea и 
+сохранять его значение после отправки формы. Давайте посмотрим, как мы будем пользоваться 
+описанным классом:
+
+Пример 
+<?php
+	echo (new Textarea)->show();
+?>
+В результате получится следующий код:
+
+<textarea></textarea>
+Пример 
+<?php
+	echo (new Textarea)->setAttr('name', 'text')->show();
+?>
+В результате получится следующий код:
+
+<textarea name="text"></textarea>
+Пример 
+<?php
+	echo (new Textarea)
+		->setAttr('name', 'text')
+		->setText('my mess')
+		->show();
+?>
+В результате получится следующий код:
+
+<textarea name="text">my mess</textarea>
+Пример 
+А вот так мы будем пользоваться нашим классом в составе формы:
+
+<?php
+	$form = (new Form)->setAttrs(['action' => 'test.php', 'method' => 
+		'GET']); 
+	
+	echo $form->open();
+		echo (new Input)->setAttr('name', 'user');
+		echo (new Textarea)->setAttr('name', 'message')->show();
+		echo new Submit;
+	echo $form->close();
+?>
+В результате получится следующая форма:
+
+<form action="" method="GET">
+	<input name="user">
+	<textarea name="message"></textarea>
+	<input type="submit">
+</form>
+Практические задачи
+№1⊗ppOpClFrTx
+
+Реализуйте описанный класс Textarea пока без сохранения значение тега после отправки формы.
+
+№2⊗ppOpClFrTx
+
+А теперь реализуйте сохранение значение тега после отправки формы.
